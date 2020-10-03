@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-TARGETSFILE="$2"
-PORTSFILE="$3"
+TARGETSFILE="$1"
+PORTSFILE="$2"
 
-if [ -z "$2" ]
+if [ -z "$1" ]
   then
     TARGETSFILE="naabu_output_targets.txt"
 fi
-if [ -z "$3" ]
+if [ -z "$2" ]
   then
     PORTSFILE="naabu_output_ports.txt"
 fi
 
 
-# truncate files
-truncate -s 0 $TARGETSFILE
-truncate -s 0 $PORTSFILE
+# clean files files
+echo -n "" > $TARGETSFILE
+echo -n "" > $PORTSFILE
 
 while IFS=: read ip port; do
   echo $ip>>$TARGETSFILE
@@ -32,10 +32,6 @@ ports=`cat $PORTSFILE | tr '\n' ','`
 # Running nmap on found results.
 
 echo "Running nmap service scan on found results."
-echo "Executing nmap -iL $TARGETSFILE -p ${ports:0:-1} -A"
+echo "Executing nmap -iL $TARGETSFILE -p ${ports:0:-1} -sV"
 
-nmap -iL $TARGETSFILE -p ${ports:0:-1} -sC -sV -O -oA $1 -Pn  --stylesheet=/home/sk3l10x1ng/sh/ctf/nmapxsl.xsl
-
-xsltproc $1.xml -o $1.html
-
-
+nmap -iL $TARGETSFILE -p ${ports:0:-1} -sV
